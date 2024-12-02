@@ -21,7 +21,7 @@ def import_data_txt(path):
     on_switching_curve_exp_err = np.loadtxt(path,usecols=(5))
     return on_switching_curve, on_switching_curve_exp_err
 # Import data from txt
-data_path = (r'C:\Users\Guillem\Documents\Work\Modelling\test_data\on_switching\rs2_on_switching_fra.txt')
+data_path = (r'on_switching_data.txt')
 on_switching_curve_exp, on_switching_curve_exp_err = import_data_txt(data_path)
 # Import data from mat file
 # mat_fileName = (r'')
