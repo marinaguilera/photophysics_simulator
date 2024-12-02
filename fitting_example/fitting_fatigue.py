@@ -15,7 +15,7 @@ np.seterr(divide='ignore', invalid='ignore')
 # dataset.
 ########################################################################################################################
 # Import experimental data from mat file
-mat_fileName = (r'C:\Users\Guillem\Documents\Work\Modelling\test_data\fatigue\mat_files\results_405p100_3Oct.mat')
+mat_fileName = (r'fitting_fatigue_data.mat')
 mat_contents = sio.loadmat(mat_fileName)
 # Declare global variables
 global system
