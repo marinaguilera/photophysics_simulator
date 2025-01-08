@@ -10,6 +10,10 @@ from cycler import cycler
 # This script showcases how to model an on-switching experiment. Specifically, in this example we simulate the
 # response of rsEGFP2 to different 405 nm power densities and fits a free parameter by comparing it to an experimental
 # dataset.
+# The experimental parameters are listed below:
+# 405 nm pulse: tStart = 1.0 ms, powerDensities = [0,0,0,0.007, 0.014, 0.034, 0.068, 0.13, 0.27, 0.48, 0.73, 0.97] kW/cm2,
+#               pulseWidth = 1.0 ms
+# 488 nm pulse: tStart = 3.0, powerDensity = 120 W/cm2, pulseWidth = 2.0 ms
 ########################################################################################################################
 # Declare global variables
 global system
@@ -156,8 +160,9 @@ k = fit_output['x']
 jac = fit_output['jac']
 res = fit_output['cost']
 std = standard_deviation(jac, res)
-#ci_95 = confidenceInterval(k, std)
+ci_95 = confidenceInterval(k, std)
 #corr_matrix = correlation_matrix(jac, res)
+print(k, std, ci_95)
 
 # Run the model with optimized parameters
 on_switching_curve, power_density_405 = fitting_model(k,system=system)
@@ -177,4 +182,5 @@ ax0.set(title = 'On-Switching curve', xlabel = '405 power density (kW/cm^2)', yl
 ax0.legend(['Simulation', 'Experimental data'], loc='lower right')
 ax1.plot(power_density_405[b], on_switching_curve_exp[b]-on_switching_curve[b])
 fig.tight_layout()
+plt.show()
 
