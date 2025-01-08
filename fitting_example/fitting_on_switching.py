@@ -21,8 +21,8 @@ global on_switching_curve_exp
 global on_switching_curve_exp_err
 # Import experimental data txt
 def import_data_txt(path):
-    on_switching_curve = np.loadtxt(path, usecols=(4))
-    on_switching_curve_exp_err = np.loadtxt(path,usecols=(5))
+    on_switching_curve = np.loadtxt(path, usecols=(0))
+    on_switching_curve_exp_err = np.loadtxt(path,usecols=(1))
     return on_switching_curve, on_switching_curve_exp_err
 
 # Import data from txt
