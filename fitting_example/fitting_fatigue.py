@@ -102,11 +102,11 @@ def model_ingridients(k):
                                            qy_trans_to_cis_anionic=1.73e-3,
                                            qy_fluorescence_on=0.35,
                                            initial_populations=[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                           extincion_coeff_triplet=[2e3, 10e3, 7.5e3],
+                                           extincion_coeff_triplet=[2e3, 10e3, k[0]],
                                            lifetime_triplet=5,
                                            lifetime_triplet_excited=1E-9,
                                            inter_system_crossing=2.5e-3,
-                                           reverse_inter_system_crossing=k[0],
+                                           reverse_inter_system_crossing=2.3e-3,
                                            qy_bleaching_on=0,
                                            qy_bleaching_off= 1e-5,
                                            qy_bleaching_triplet=1.2e-3,
@@ -154,9 +154,9 @@ def plot_fatigue(Ncycles, data_theo, data_exp):
 # obtain the optimal value for the fitted parameter as well as the jacobian matrix and the residue array at the
 # convergence step. These last two parameters are used to calculate the uncertainty associated to the fit in the form of
 # standard deviation and confidence intervals.
-k0 = [2.5e-3]
-lb = [1e-8]
-ub = [5e-1]
+k0 = [6e3]
+lb = [1e3]
+ub = [25e3]
 fit_output = least_squares(residuals, k0, bounds=(lb,ub))
 k = fit_output['x']
 jac = fit_output['jac']

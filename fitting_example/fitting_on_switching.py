@@ -122,10 +122,10 @@ def model_ingridients(k):
                                            lifetime_prot_trans=48e-3,
                                            pKa_cis=5.9,
                                            pH=7.5,
-                                           qy_im_to_off= k[0],
+                                           qy_im_to_off= 0.12,
                                            qy_fluorescence_im= 0.35,
                                            lifetime_maturation= 5e-3,
-                                           extincion_coeff_immature= [16e3, 28e3],
+                                           extincion_coeff_immature= [k[0], 28e3],
                                            nspecies=13)
     # Detection
     camera = pse.Detector(exposureTime=[3, 5], scalingAmplitude=1.6e7, integrationTime=0.1)
@@ -152,9 +152,9 @@ def residuals (k, system=system, on_switching_data=on_switching_curve_exp, on_sw
 # convergence step. These last two parameters are used to calculate the uncertainty associated to the fit in the form of
 # standard deviation and confidence intervals. The correlation matrix between free parameters (if there are more than
 # one free parameters to be fitted) can also be calculated.
-k0 = [.09]
-lb = [.01]
-ub = [.33]
+k0 = [12e3]
+lb = [5e3]
+ub = [22e3]
 fit_output = least_squares(residuals, k0, bounds=(lb,ub))
 k = fit_output['x']
 jac = fit_output['jac']
