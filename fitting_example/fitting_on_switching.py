@@ -20,6 +20,7 @@ def import_data_txt(path):
     on_switching_curve = np.loadtxt(path, usecols=(4))
     on_switching_curve_exp_err = np.loadtxt(path,usecols=(5))
     return on_switching_curve, on_switching_curve_exp_err
+
 # Import data from txt
 data_path = (r'on_switching_data.txt')
 on_switching_curve_exp, on_switching_curve_exp_err = import_data_txt(data_path)
@@ -38,6 +39,7 @@ def standard_deviation(jac, rss):
     cov_matrix = (rss/df)*linalg.inv(hessian_matrix)
     std = np.sqrt(np.diag(cov_matrix))
     return std
+
 # Calculate the confidence interval from the fitted parameter and the calculated standard deviation
 def confidenceInterval(k, std):
     ci_95 = np.zeros((k.shape[0],2))
@@ -101,7 +103,7 @@ def model_ingridients(k):
                                            qy_cis_to_trans_anionic=1.73E-2,
                                            qy_trans_to_cis_neutral=.33,
                                            qy_cis_to_trans_neutral=.33,
-                                           qy_trans_to_cis_anionic=2e-3,
+                                           qy_trans_to_cis_anionic=1.73e-3,
                                            qy_fluorescence_on=0.35,
                                            initial_populations=[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                            extincion_coeff_triplet=[2e3, 10e3],

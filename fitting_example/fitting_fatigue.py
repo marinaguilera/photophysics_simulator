@@ -11,17 +11,24 @@ np.seterr(divide='ignore', invalid='ignore')
 ########################################################################################################################
 # Example of a photo-switching fatigue experiment fitting.
 # This script showcases how to model a photo-switching fatigue experiment. Specifically, in this example we simulate the
-# response of rsEGFP2 to different 488 nm power densities and fits a free parameter by comparing it to an experimental
-# dataset.
+# response of rsEGFP2 to an additional 592 nm co-illumination pulse. The time delay between the on-set of 592 nm
+# illumination and the 488 nm pulse is scanned between different values. The routine fits a free parameter by comparing
+# the simulated experiment to an experimental dataset.
+
+# The experimental parameters are listed below:
+# 405 nm pulse: tStart = 1.0 ms, powerDensity = 240 W/cm2, pulseWidth = 1.0 ms
+# 488 nm pulse: tStart = 3.0 ms, powerDensity = 300 W/cm2, pulseWidth = 0.9 ms
+# 592 nm pulse: tStart = [3, 4, 5, 8.5, 2, -], powerDensity = 4.00 or 0.00 kW/cm2, pulseWidth = 1.0 ms
+# camera exposure time = [3, 3.9]
 ########################################################################################################################
 # Import experimental data from mat file
-mat_fileName = (r'fitting_fatigue_data.mat')
+mat_fileName = (r'fatigue_data_592_timing.mat')
 mat_contents = sio.loadmat(mat_fileName)
 # Declare global variables
 global system
 global fatigue_data
 # Extract the variable meanF from mat file
-fatigue_data = mat_contents['meanF']
+fatigue_data = mat_contents['fatigue_norm']
 ########################################################################################################################
 # Methods
 # Calculate standard deviation from jacobian matrix from least_squares
@@ -51,15 +58,14 @@ def fitting_model(k, system=system):
 
     # Many variants of fatigue experiment. The loop is defined depending on the parameters that are being changed.
     # Define the lead_vector as the one to loop over.
-    power_density_488 = np.array([0.07, 0.18, 0.41, 0.93])
-    exposure_times = np.array([[3,5.5],[3, 4.4], [3, 3.9], [3, 3.5]])
-    lead_vector = power_density_488
+    power_density_592 = np.array([4, 4, 4, 4, 4, 0])
+    tStart_592 = np.array([3, 4, 5, 8.5, 2, 3])
+    lead_vector = power_density_592
     fatigue_curve = np.zeros((Ncycles, lead_vector.shape[0]))
 
     for i in range (lead_vector.shape[0]):
-        power_density_488_exp = power_density_488[i]
-        exposure_times_exp = exposure_times[i]
-        pulseWidthLambda_exp = (exposure_times_exp[1]-exposure_times_exp[0])
+        power_density_592_exp = power_density_592[i]
+        tStart_592_exp = tStart_592[i]
 
         fatigue_experiment = pse.experiment(illumination=system.illumination,
                                             fluorophore=system.fluorophore,
@@ -67,9 +73,8 @@ def fitting_model(k, system=system):
 
         # For each iteration of the loop pass the corresponding illumination parameters. Reset the initial populations
         # for each iteration of the lead_vector loop
-        fatigue_experiment.detection.exposureTime = exposure_times_exp
-        fatigue_experiment.illumination.powerDensities[1] = power_density_488_exp
-        fatigue_experiment.illumination.pulseWidthLambda = [1, pulseWidthLambda_exp, 0]
+        fatigue_experiment.illumination.powerDensities[-1] = power_density_592_exp
+        fatigue_experiment.illumination.tStartLambda[-1] = tStart_592_exp
         fatigue_experiment.fluorophore.initial_populations = [0,0,1,0,0,0,0,0,0,0,0,0,0]
 
         for x in range(Ncycles):
@@ -81,8 +86,8 @@ def fitting_model(k, system=system):
 def model_ingridients(k):
     # Illumination scheme
     fatigue_pulse = pse.ModulatedLasers(wavelengths=[405, 488, 592],
-                                        powerDensities=[.1,.2, 0],
-                                        pulseWidths=[1,1.5,0],
+                                        powerDensities=[.24,.3, 4],
+                                        pulseWidths=[1,0.9,1],
                                         tStart=[1, 3, 0],
                                         dwellTime=[10])
     # Fluorophore. k is an array for the free parameters to fit.
@@ -91,21 +96,21 @@ def model_ingridients(k):
                                            wavelength=[405, 488, 592],
                                            lifetime_on=1.6E-6,
                                            lifetime_off=20E-9,
-                                           qy_cis_to_trans_anionic=1.5E-2,
+                                           qy_cis_to_trans_anionic=1.73E-2,
                                            qy_trans_to_cis_neutral=0.33,
                                            qy_cis_to_trans_neutral=0.33,
-                                           qy_trans_to_cis_anionic=2e-3,
+                                           qy_trans_to_cis_anionic=1.73e-3,
                                            qy_fluorescence_on=0.35,
                                            initial_populations=[0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                            extincion_coeff_triplet=[2e3, 10e3, 7.5e3],
                                            lifetime_triplet=5,
                                            lifetime_triplet_excited=1E-9,
                                            inter_system_crossing=2.5e-3,
-                                           reverse_inter_system_crossing=2.5e-3,
+                                           reverse_inter_system_crossing=k[0],
                                            qy_bleaching_on=0,
                                            qy_bleaching_off= 1e-5,
-                                           qy_bleaching_triplet=k[0],
-                                           qy_bleaching_triplet_exc= 1e-6,
+                                           qy_bleaching_triplet=1.2e-3,
+                                           qy_bleaching_triplet_exc= 5e-7,
                                            lifetime_deprot_cis=.825,
                                            lifetime_prot_trans=48e-3,
                                            pKa_cis=5.9,
@@ -116,7 +121,7 @@ def model_ingridients(k):
                                            extincion_coeff_immature= [16e3, 28e3,0],
                                            nspecies=13)
     # Detection
-    camera = pse.Detector(exposureTime=[], scalingAmplitude=1.6e7, integrationTime=0.1)
+    camera = pse.Detector(exposureTime=[3, 3.9], scalingAmplitude=1.6e7, integrationTime=0.1)
     return fatigue_pulse, rsEGFP2_triplet_bleaching, camera
 
 # Compute residuals between theoretical curve and experimental one. This function will be fed into least_squares.
@@ -134,7 +139,7 @@ def residuals (k, system=system, fatigue_data=fatigue_data, bias=bias):
 # Plotting functions
 def plot_fatigue(Ncycles, data_theo, data_exp):
     cycles = np.arange(1, Ncycles+1)
-    custom_cycler = cycler(color=['b','g','r','c','m']) #,'m','y'])
+    custom_cycler = cycler(color=['b','g','r','c','m', 'y']) #,'m','y'])
     fig, ax = plt.subplots()
     ax.set_prop_cycle(custom_cycler)
     ax.plot(cycles, data_theo)
@@ -149,7 +154,7 @@ def plot_fatigue(Ncycles, data_theo, data_exp):
 # obtain the optimal value for the fitted parameter as well as the jacobian matrix and the residue array at the
 # convergence step. These last two parameters are used to calculate the uncertainty associated to the fit in the form of
 # standard deviation and confidence intervals.
-k0 = [1e-3]
+k0 = [2.5e-3]
 lb = [1e-8]
 ub = [5e-1]
 fit_output = least_squares(residuals, k0, bounds=(lb,ub))
@@ -169,7 +174,7 @@ fatigue_data_fit = np.divide(fatigue_data_fit, fatigue_data_fit[0,:])
 
 # Plotting data
 plot_fatigue(Ncycles, fatigue_curve, fatigue_data_fit)
-custom_cycler = cycler(color=['b','g','r','c','m']) #,'m','y'])
+custom_cycler = cycler(color=['b','g','r','c','m','y']) #,'m','y'])
 fig, ax = plt.subplots()
 ax.set_prop_cycle(custom_cycler)
 ax.plot(fatigue_data_fit-fatigue_curve)
