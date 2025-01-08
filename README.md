@@ -1,5 +1,5 @@
 # photophysics_simulator
-Tools for computing the expected fluorescence signal from probes with complex photo-physics.  
+Tools for computing the expected fluorescence signal from fluorescent probes with complex photo-physics.  
 The program solves analitically the kinetic rate equation of an arbitrarily complex network of interconnected electronic states.  
 As an input for the simulation, the user should define the experimental pulse scheme, the kinetic matrix of the fluorophore and the characteristics of the detector.  
 The program has been optimized to simulate the response of Reversibly Switchable Fluorescencent Proteins (RSFPs, specifically rsEGFP2) to different pulse schemes.  
