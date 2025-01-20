@@ -1,8 +1,8 @@
 # photophysics_simulator
 Tools for computing the expected fluorescence signal from fluorescent probes with complex photo-physics.  
-The program solves analitically the kinetic rate equation of an arbitrarily complex network of interconnected electronic states.  
+The program solves analytically the kinetic rate equations of an arbitrarily complex network of interconnected electronic states.  
 As an input for the simulation, the user should define the experimental pulse scheme, the kinetic matrix of the fluorophore and the characteristics of the detector.  
-The program has been optimized to simulate the response of Reversibly Switchable Fluorescencent Proteins (RSFPs, specifically rsEGFP2) to different pulse schemes.  
+The program has been optimized to simulate the response of Reversibly Switchable Fluorescent Proteins (RSFPs, specifically rsEGFP2) to different pulse schemes.  
 
 ## Content
 - `photophysics_simulator_engine.py`    
@@ -18,6 +18,6 @@ This folder contains a complete description of how to simulate the three most co
   - `fatigue_experiment.py`. Fluorescence signal evolution upon multiple photo-switching cycles.  
   
 - `fitting_example`
-This folder contains examples on how to perform `least_squares` fitting routines of two different simulated experiments. The folder inclues two example experimental datasets.  
+This folder contains examples of how to perform `least_squares` fitting routines of two different simulated experiments. The folder includes two example experimental datasets.  
   - `fitting_on_switching.py`. Fit of the fluorescence signal response to an increasing 405 nm power density ramp. The goal is to find the optimum value for a given parameter by comparing the experimental curve with the simulated one. `on_switching_data.txt` includes the normalised fluorescence intensity as well as the experimental standard deviation.  
   - `fitting_fatigue.py`. Fit of the fluorescence evolution upon 2000 photo-switching cycles. The goal is to find the optimum value for a given parameter by performing a global fit of the simulated experiment to the data. `fatigue_data_592_timing.mat` includes the normalised fluorescence intensity as well as the experimental standard deviation.
