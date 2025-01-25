@@ -21,3 +21,8 @@ This folder contains a complete description of how to simulate the three most co
 This folder contains examples of how to perform `least_squares` fitting routines of two different simulated experiments. The folder includes two example experimental datasets.  
   - `fitting_on_switching.py`. Fit of the fluorescence signal response to an increasing 405 nm power density ramp. The goal is to find the optimum value for a given parameter by comparing the experimental curve with the simulated one. `on_switching_data.txt` includes the normalised fluorescence intensity as well as the experimental standard deviation.  
   - `fitting_fatigue.py`. Fit of the fluorescence evolution upon 2000 photo-switching cycles. The goal is to find the optimum value for a given parameter by performing a global fit of the simulated experiment to the data. `fatigue_data_592_timing.mat` includes the normalised fluorescence intensity as well as the experimental standard deviation.
+ 
+## Installation and use
+To use the code as standalone, download the program from the [releases page](https://github.com/marinaguilera/photophysics_simulator/releases) and open it in the development software of choice.      
+The expected runtime for the scripts listed in `experiments_type_example` is < 1 min. The fitting routines in `fitting_example` are computationally heavier and the expected runtime depends on the parameter to fit.  
+The code has been developed using PyCharm Community Edition 2021.3 and Python 3.9 as the Python interpreter. 
